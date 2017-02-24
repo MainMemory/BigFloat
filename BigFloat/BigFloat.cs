@@ -1,7 +1,4 @@
-﻿using System;
-using System.Numerics;
-
-namespace BigFloat
+﻿namespace System.Numerics
 {
 	public struct BigFloat
 	{

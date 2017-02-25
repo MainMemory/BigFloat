@@ -405,24 +405,19 @@
 				return Zero;
 			BigInteger valA = a.Value;
 			BigInteger valB = b.Value;
-			int radix;
-			if (a.Radix == b.Radix)
-				radix = a.Radix;
-			else if (a.Radix > b.Radix)
+			if (a.Radix > b.Radix)
 			{
-				radix = a.Radix;
 				valB *= BigInteger.Pow(10, a.Radix - b.Radix);
 			}
 			else
 			{
-				radix = b.Radix;
 				valA *= BigInteger.Pow(10, b.Radix - a.Radix);
 			}
 			BigInteger result = BigInteger.Zero;
-			BigInteger mult = BigInteger.Pow(10, radix);
+			int radix = 0;
 			while (true)
 			{
-				result += BigInteger.DivRem(valA, valB, out valA) * mult;
+				result += BigInteger.DivRem(valA, valB, out valA);
 				if (valA.IsZero)
 					break;
 				if (radix > divmax)

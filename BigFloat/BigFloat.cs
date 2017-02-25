@@ -298,11 +298,22 @@
 
 		public static BigFloat Pow(BigFloat x, BigFloat y)
 		{
-			if (y.Radix == 0)
-				return PowBySquaring(x, y.Value);
-			if (x.Radix != 0 || y.Radix != 0 || y < 0 || y > int.MaxValue)
-				return Math.Pow((double)x, (double)y);
-			return BigInteger.Pow(x.Value, (int)y.Value);
+			if (x.IsNaN || y.IsNaN) return NaN;
+			if (y == 0) return 1;
+			// TODO: handle all other special cases in here
+			if (x.Radix < 0 || y.Radix < 0) return Math.Pow((double)x, (double)y);
+
+			if (y.Radix == 0) {
+				if (x.Radix == 0 && y >= 0 && y <= int.MaxValue) {
+					return BigInteger.Pow(x.Value, (int)y.Value);
+				}
+				else {
+					return PowBySquaring(x, y.Value);
+				}
+			}
+			else {
+				return Exp(y * Log(x));
+			}
 		}
 
 		public static BigFloat Sin(BigFloat val)

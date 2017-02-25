@@ -409,12 +409,12 @@
 
 		public static BigFloat Log(BigFloat val, BigFloat newBase)
 		{
-			return Math.Log((double)val, (double)newBase);
+			return Log(val) / Log(newBase);
 		}
 
 		public static BigFloat Log10(BigFloat val)
 		{
-			return Math.Log10((double)val);
+			return Log(val) / Log(10);
 		}
 
 		public static BigFloat operator +(BigFloat val)

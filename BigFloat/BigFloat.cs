@@ -349,11 +349,11 @@
 
 			BigFloat root = val / 2;
 			BigFloat oroot = val / root;
-			while (Truncate(root, sqrtmax) != Truncate(oroot, sqrtmax)) {
+			while (Round(root, sqrtmax) != Round(oroot, sqrtmax)) {
 				root = (root + oroot) / 2;
 				oroot = val / root;
 			}
-			return Truncate(root, sqrtmax);
+			return Round(root, sqrtmax);
 		}
 
 		public static BigFloat Abs(BigFloat val)

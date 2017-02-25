@@ -156,6 +156,8 @@
 			}
 		}
 
+		public BigFloat Reciprocal { get { return new BigFloat(1) / this; } }
+
 		public static BigFloat Round(BigFloat val)
 		{
 			if (val.Radix <= 0)
@@ -214,8 +216,33 @@
 			return Math.Exp((double)val);
 		}
 
+		private static BigFloat PowBySquaring(BigFloat x, BigInteger n)
+		{
+			if (n == 0) {
+				return 1;
+			}
+			if (n < 0) {
+				x = x.Reciprocal;
+				n = -n;
+			}
+			BigFloat y = 1;
+			while(n > 1) {
+				if((n%2) == 0) {
+					x *= x;
+					n /= 2;
+				}else {
+					y *= x;
+					x *= x;
+					n = (n - 1) / 2;
+				}
+			}
+			return x * y;
+		}
+
 		public static BigFloat Pow(BigFloat x, BigFloat y)
 		{
+			if (y.Radix == 0)
+				return PowBySquaring(x, y.Value);
 			if (x.Radix != 0 || y.Radix != 0 || y < 0 || y > int.MaxValue)
 				return Math.Pow((double)x, (double)y);
 			return BigInteger.Pow(x.Value, (int)y.Value);

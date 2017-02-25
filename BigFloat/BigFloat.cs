@@ -8,6 +8,7 @@
 		const int divmax = 1000;
 		const int sqrtmax = divmax - 1;
 		const int expmax = divmax - 1;
+		const int logmax = 100;
 		const int posinf = -1;
 		const int neginf = -2;
 		const int nan = -3;
@@ -278,7 +279,7 @@
 			}
 			BigFloat y = 1;
 			while(n > 1) {
-				if((n%2) == 0) {
+				if(n.IsEven) {
 					x *= x;
 					n /= 2;
 				}else {
@@ -380,7 +381,30 @@
 
 		public static BigFloat Log(BigFloat val)
 		{
-			return Math.Log((double)val);
+			bool neg;
+			if(val>0 && val < 1) {
+				// log(1-x)
+				neg = true;
+				val = 1 - val;
+			}else if(val<2){
+				// log(1+x)
+				neg = false;
+				val -= 1;
+			}else {
+				return Math.Log((double)val);
+			}
+			BigFloat last = 1, iter = 0;
+			BigInteger n = 1;
+			while (Round(iter, logmax) != Round(last, logmax)) {
+				last = iter;
+				if (n.IsEven || neg) {
+					iter -= PowBySquaring(val, n) / n;
+				}else {
+					iter += PowBySquaring(val, n) / n;
+				}
+				n++;
+			}
+			return Round(iter, logmax);
 		}
 
 		public static BigFloat Log(BigFloat val, BigFloat newBase)

@@ -7,6 +7,7 @@
 		/// </summary>
 		const int divmax = 1000;
 		const int sqrtmax = divmax - 1;
+		const int expmax = divmax - 1;
 		const int posinf = -1;
 		const int neginf = -2;
 		const int nan = -3;
@@ -256,7 +257,14 @@
 
 		public static BigFloat Exp(BigFloat val)
 		{
-			return Math.Exp((double)val);
+			BigFloat last = 0, iter = 1;
+			BigInteger n = 1, fact=1;
+			while (Round(iter, expmax) != Round(last, expmax)) {
+				last = iter;
+				iter += PowBySquaring(val, n) / (fact*=n);
+				n++;
+			}
+			return Round(iter, expmax);
 		}
 
 		private static BigFloat PowBySquaring(BigFloat x, BigInteger n)

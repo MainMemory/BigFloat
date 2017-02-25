@@ -8,7 +8,7 @@
 		const int divmax = 1000;
 		const int sqrtmax = divmax - 1;
 		const int expmax = divmax - 1;
-		const int logmax = 100;
+		const int logmax = 10;
 		const int posinf = -1;
 		const int neginf = -2;
 		const int nan = -3;
@@ -258,11 +258,16 @@
 
 		public static BigFloat Exp(BigFloat val)
 		{
+			if (val.IsNegativeInfinity) return Zero;
+			if (val.Radix<0) return val;
+
 			BigFloat last = 0, iter = 1;
 			BigInteger n = 1, fact=1;
+			BigFloat sq = val;
 			while (Round(iter, expmax) != Round(last, expmax)) {
 				last = iter;
-				iter += PowBySquaring(val, n) / (fact*=n);
+				iter += sq / (fact*=n);
+				sq *= sq;
 				n++;
 			}
 			return Round(iter, expmax);
@@ -381,27 +386,41 @@
 
 		public static BigFloat Log(BigFloat val)
 		{
+			if (val.Sign != 1) return NaN;
+			if (val.Radix < 0) return val;
+
 			bool neg;
-			if(val>0 && val < 1) {
+			if (val < 1) {
 				// log(1-x)
 				neg = true;
 				val = 1 - val;
-			}else if(val<2){
+			} else if(val<2){
 				// log(1+x)
 				neg = false;
 				val -= 1;
-			}else {
-				return Math.Log((double)val);
+			} else if(val<4){
+				return Log(Sqrt(val)) * 2;
+			} else if (val <= 10) {
+				return Log(Sqrt(Sqrt(val))) * 4;
+			} else {
+				int deltaradix = 0;
+				while (val > 10) {
+					val.Radix++;
+					deltaradix++;
+				}
+				return Log(val) + deltaradix * Ln10;
 			}
 			BigFloat last = 1, iter = 0;
 			BigInteger n = 1;
+			BigFloat sq = val;
 			while (Round(iter, logmax) != Round(last, logmax)) {
 				last = iter;
 				if (n.IsEven || neg) {
-					iter -= PowBySquaring(val, n) / n;
+					iter -= sq / n;
 				}else {
-					iter += PowBySquaring(val, n) / n;
+					iter += sq / n;
 				}
+				sq *= sq;
 				n++;
 			}
 			return Round(iter, logmax);
@@ -414,7 +433,7 @@
 
 		public static BigFloat Log10(BigFloat val)
 		{
-			return Log(val) / Log(10);
+			return Log(val) / Ln10;
 		}
 
 		public static BigFloat operator +(BigFloat val)
@@ -926,6 +945,8 @@
 		public static readonly BigFloat E = Exp(1);
 
 		public static readonly BigFloat PI = new BigFloat(0x39, 0x00, 0x00, 0x00, 0x2E, 0x09, 0xCF, 0x68, 0x28, 0x91, 0xE5, 0x32, 0xDF, 0x62, 0x62, 0x37, 0xD3, 0x70, 0xBD, 0x22, 0x05, 0x23, 0x30, 0x5E, 0xFA, 0xC1, 0x1F, 0x80, 0x00);
+
+		private static readonly BigFloat Ln10 = Log(10);
 
 		public override string ToString()
 		{

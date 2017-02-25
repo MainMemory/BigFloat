@@ -267,7 +267,7 @@
 			while (Round(iter, expmax) != Round(last, expmax)) {
 				last = iter;
 				iter += sq / (fact*=n);
-				sq *= sq;
+				sq *= val;
 				n++;
 			}
 			return Round(iter, expmax);
@@ -420,7 +420,7 @@
 				}else {
 					iter += sq / n;
 				}
-				sq *= sq;
+				sq *= val;
 				n++;
 			}
 			return Round(iter, logmax);

@@ -6,6 +6,7 @@
 		/// The maximum Radix value for division operations.
 		/// </summary>
 		const int divmax = 1000;
+		const int sqrtmax = divmax - 1;
 		const int posinf = -1;
 		const int neginf = -2;
 		const int nan = -3;
@@ -177,6 +178,17 @@
 			return (BigInteger)val;
 		}
 
+		public static BigFloat Truncate(BigFloat val, int radix)
+		{
+			if (val.Radix <= 0)
+				return val;
+			if(val.Radix >= radix) {
+				val.Radix -= radix;
+				return new BigFloat((BigInteger)val, radix);
+			}
+			return val;
+		}
+
 		public static BigFloat Floor(BigFloat val)
 		{
 			if (val.Radix <= 0)
@@ -261,7 +273,17 @@
 
 		public static BigFloat Sqrt(BigFloat val)
 		{
-			return Math.Sqrt((double)val);
+			if (val.IsZero || val.IsPositiveInfinity || val.IsNaN)
+				return val;
+			if (val.Sign == -1) return BigFloat.NaN;
+
+			BigFloat root = val / 2;
+			BigFloat oroot = val / root;
+			while (Truncate(root, sqrtmax) != Truncate(oroot, sqrtmax)) {
+				root = (root + oroot) / 2;
+				oroot = val / root;
+			}
+			return Truncate(root, sqrtmax);
 		}
 
 		public static BigFloat Abs(BigFloat val)

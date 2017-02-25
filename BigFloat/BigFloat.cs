@@ -838,13 +838,11 @@
 				case 0:
 					return Value.ToString("R");
 				default:
-					bool min = this < Zero;
-					BigInteger res = BigInteger.Abs(Value);
-					BigInteger rem;
-					res = BigInteger.DivRem(res, BigInteger.Pow(10, Radix), out rem);
-					string str = res.ToString("R") + "." + rem.ToString("R").PadLeft(Radix, '0');
-					if (min)
-						str = "-" + str;
+					bool m = this < Zero;
+					string str = BigInteger.Abs(Value).ToString("R").PadLeft(Radix + 1, '0');
+					str = str.Insert(str.Length - Radix, ".");
+					if (m)
+						return "-" + str;
 					return str;
 			}
 		}

@@ -173,6 +173,23 @@
 			return s / 10;
 		}
 
+		public static BigFloat Round(BigFloat val, int radix)
+		{
+			if (val.Radix <= 0)
+				return val;
+			if (val.Radix > radix) {
+				BigInteger s = val.Value / BigInteger.Pow(10, val.Radix - radix - 1);
+				if (s > 0) {
+					if(s % 10 >= 5)
+						return new BigFloat(s / 10 + 1, radix);
+				}
+				else if (s % 10 <= -5)
+					return new BigFloat(s / 10 - 1, radix);
+				return new BigFloat(s / 10, radix);
+			}
+			return val;
+		}
+
 		public static BigFloat Truncate(BigFloat val)
 		{
 			if (val.Radix <= 0)
@@ -201,6 +218,19 @@
 			return s / 10;
 		}
 
+		public static BigFloat Floor(BigFloat val, int radix)
+		{
+			if (val.Radix <= 0)
+				return val;
+			if (val.Radix > radix) {
+				BigInteger s = val.Value / BigInteger.Pow(10, val.Radix - radix - 1);
+				if (s < 0 && s % 10 < 0)
+					return new BigFloat(s / 10 - 1, radix);
+				return new BigFloat(s / 10, radix);
+			}
+			return val;
+		}
+
 		public static BigFloat Ceiling(BigFloat val)
 		{
 			if (val.Radix <= 0)
@@ -209,6 +239,19 @@
 			if (s > 0 && s % 10 > 0)
 				return s / 10 + 1;
 			return s / 10;
+		}
+
+		public static BigFloat Ceiling(BigFloat val, int radix)
+		{
+			if (val.Radix <= 0)
+				return val;
+			if (val.Radix > radix) {
+				BigInteger s = val.Value / BigInteger.Pow(10, val.Radix - radix - 1);
+				if (s > 0 && s % 10 > 0)
+					return new BigFloat(s / 10 + 1, radix);
+				return new BigFloat(s / 10, radix);
+			}
+			return val;
 		}
 
 		public static BigFloat Exp(BigFloat val)

@@ -400,6 +400,8 @@
 			if (val.Sign != 1) return NaN;
 			if (val.Radix < 0) return val;
 
+			if (val == 10) return Ln10;
+
 			bool neg;
 			if (val < 1) {
 				// log(1-x)
@@ -411,7 +413,7 @@
 				val -= 1;
 			} else if(val<4){
 				return Log(Sqrt(val)) * 2;
-			} else if (val <= 10) {
+			} else if (val < 10) {
 				return Log(Sqrt(Sqrt(val))) * 4;
 			} else {
 				int deltaradix = 0;
